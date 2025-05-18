@@ -10,6 +10,9 @@ connectDB();
 const app = express();
 app.use(cors());
 app.use(express.json());
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+
 
 // Serve static files for Swagger custom CSS (optional)
 app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -18,7 +21,9 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const options = {
-  customSiteTitle: "The Words That I Know API - Swagger"
+
+  customSiteTitle: "The Words That I Know API - Swagger",
+  customCssUrl: CSS_URL,
 };
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
