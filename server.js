@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require('path');
 const connectDB = require('./config/db');
 
 dotenv.config();
@@ -10,12 +11,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve static files for Swagger custom CSS (optional)
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// Swagger UI
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger');
+const swaggerDocument = require('./swagger.json');
+const options = {
+  customSiteTitle: "The Words That I Know API - Swagger"
+};
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
-
+// Simple root route
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
@@ -25,12 +33,12 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/cart', require('./routes/cart'));
 
-// 404 handler for unknown routes
+// 404 handler
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Global error handler middleware
+// Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
