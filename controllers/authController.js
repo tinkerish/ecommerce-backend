@@ -35,13 +35,14 @@ exports.forgotPassword = async (req, res) => {
   user.resetTokenExpire = Date.now() + 3600000; // 1 hour
   await user.save();
 
-  await sendEmail(user.email, 'Reset Your Password', `Reset token: ${token}`);
-  res.json({ message: 'Password reset token sent' });
+  const resetUrl = `https://flavour-of-art.vercel.app/changepassword/${token}`;
+  await sendEmail(user.email, 'Reset Your Password', `Reset here: ${resetUrl}`);
+  res.json({ message: 'Password reset link sent' });
 };
 
 exports.resetPassword = async (req, res) => {
   const user = await User.findOne({
-    resetToken: req.body.token,
+    resetToken: req.params.token,
     resetTokenExpire: { $gt: Date.now() }
   });
   if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
