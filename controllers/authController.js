@@ -32,7 +32,7 @@ exports.forgotPassword = async (req, res) => {
 
   const token = crypto.randomBytes(20).toString('hex');
   user.resetToken = token;
-  user.resetTokenExpire = Date.now() + 3600000; // 1 hour
+  user.resetTokenExpire = Date.now() + 3600000;
   await user.save();
 
   const resetUrl = `https://flavour-of-art.vercel.app/changepassword/${token}`;
